@@ -60,10 +60,10 @@ def draw_grid(scene, xs, ys, zs, out_fname):
         f.write(scene.save_image())
     scene.delete_geometry(spheres)
 
-MP3D_GLB="/datasets/soundspaces/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb"
+# MP3D_GLB="/datasets/soundspaces/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb"
 GIBSON_GLB="/datasets/soundspaces/scene_datasets/gibson_data/gibson/Oyens.glb"
 
-def main(glb_file=GIBSON_GLB, ch=4, n=12):
+def main(glb_file=GIBSON_GLB, ch=4, n=18):
     ply_file = glb_file.rsplit('.', 1)[0] + '_semantic.ply'
     name = os.path.basename(glb_file).rsplit('.', 1)[0]
     out_dir = "output"
@@ -76,12 +76,12 @@ def main(glb_file=GIBSON_GLB, ch=4, n=12):
 
     cfg = Config()
     ctx = Context(cfg)
-    ctx.add_source()
-    ctx.add_listener(ChannelLayout(ChannelLayoutType.Ambisonics, ch))
     ctx.add_object()
     ctx.set_object_position(0, [0, 0, 0])
     ctx.set_object_mesh_obj(0, glb_file, "")
     ctx.set_object_mesh_ply(0, ply_file, "")
+    ctx.add_source()
+    ctx.add_listener(ChannelLayout(ChannelLayoutType.Ambisonics, ch))
 
     scene = trimesh.load(glb_file)
     # rotation_matrix = trimesh.transformations.rotation_matrix(-np.radians(90), [1, 0, 0])
@@ -91,8 +91,8 @@ def main(glb_file=GIBSON_GLB, ch=4, n=12):
         scene.geometry[k].visual.face_colors = [255, 235, 255]
     scene.add_geometry(trimesh.creation.axis(axis_length=1))
 
-    xs = np.linspace(-14, 8, n)
-    ys = np.linspace(-4, 8, n)
+    xs = np.linspace(-12, 6, n)
+    ys = np.linspace(-4, 6, n)
     zs = np.linspace(0, 2, n)
     # ys = [1.5]
     zs = [1.5]

@@ -21,6 +21,14 @@ ext_modules = [
         library_dirs=["RLRAudioPropagationPkg/libs/linux/x64"],  # Path to the directory containing the shared library
         extra_link_args=['-Wl,-rpath,$ORIGIN/RLRAudioPropagationPkg/libs/linux/x64'],  # Set rpath
     ),
+    Pybind11Extension(
+        "_rlr_audio_propagation_v1",
+        ["src/rlr_audio_bindings_v1.cpp"],
+        include_dirs=["RLRAudioPropagationPkg/headers"],  # Path to the headers directory
+        libraries=["RLRAudioPropagation"],               # Name of the library without prefix and suffix
+        library_dirs=["RLRAudioPropagationPkg/libs/linux/x64"],  # Path to the directory containing the shared library
+        extra_link_args=['-Wl,-rpath,$ORIGIN/RLRAudioPropagationPkg/libs/linux/x64'],  # Set rpath
+    ),
 ]
 
 setup(

@@ -1,8 +1,8 @@
 import os
 import ctypes
 import numpy as np
-import RLRAudioPropagation
-from RLRAudioPropagation import Simulator, Vector3f, Quaternion, Configuration, ChannelLayout, as_vertex_data, IndexData
+import _rlr_audio_propagation_v1 as RLRAudioPropagation
+from _rlr_audio_propagation_v1 import Simulator, Vector3f, Quaternion, Configuration, ChannelLayout, as_vertex_data, as_index_data, IndexData
 
 class AudioSensorSpec:
     def __init__(self):
@@ -65,12 +65,12 @@ def create_scene_mesh_from_trimesh(scene):
 #     vertex_data.vertexStride = 0  # Assuming tightly packed vertices
 #     return vertex_data
 
-def as_index_data(indices):
-    index_data = RLRAudioPropagation.IndexData()
-    index_data.indices = ctypes.addressof(ctypes.c_uint32.from_buffer(indices))
-    index_data.byteOffset = 0
-    index_data.indexCount = len(indices)
-    return index_data
+# def as_index_data(indices):
+#     index_data = RLRAudioPropagation.IndexData()
+#     index_data.indices = indices.ctypes.data_as(ctypes.POINTER(ctypes.c_uint32))
+#     index_data.byteOffset = 0
+#     index_data.indexCount = len(indices)
+#     return index_data
 
 class AudioSensor:
     def __init__(self, node, spec):
@@ -213,9 +213,11 @@ class AudioSensor:
         return cat
 
     def load_mesh(self, scene_mesh):
-        self.audioSimulator_.LoadMeshData(
-            as_vertex_data(scene_mesh.vbo.astype(np.float32)), 
-            as_index_data(scene_mesh.ibo))
+        v = as_vertex_data(scene_mesh.vbo.astype(np.float32))
+        print(v)
+        i = as_index_data(scene_mesh.ibo)
+        print(i)
+        self.audioSimulator_.LoadMeshData(v, i)
         print("Loaded")
 
     def get_simulation_folder(self):
@@ -230,7 +232,9 @@ class AudioSensor:
 
 if __name__ == '__main__':
     import trimesh
-    scene = trimesh.load('/datasets/soundspaces/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb')
+    glb_file='/datasets/soundspaces/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb'
+    glb_file="/datasets/soundspaces/scene_datasets/gibson_data/gibson/Oyens.glb"
+    scene = trimesh.load(glb_file)
     mesh = create_scene_mesh_from_trimesh(scene)
     spec = AudioSensorSpec()
     sensor = AudioSensor(None, spec)

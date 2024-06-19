@@ -25,6 +25,25 @@ RLRAudioPropagation::VertexData as_vertex_data(py::array_t<float, py::array::c_s
     return vertex_data;
 }
 
+RLRAudioPropagation::IndexData as_index_data(py::array_t<uint32_t, py::array::c_style | py::array::forcecast> array) {
+    py::buffer_info info = array.request();
+    if (info.ndim != 1 || info.format != py::format_descriptor<uint32_t>::format()) {
+        std::ostringstream oss;
+        oss << "Invalid buffer format! Got array with shape (";
+        for (size_t i = 0; i < info.ndim; ++i) {
+            if (i > 0) oss << ", ";
+            oss << info.shape[i];
+        }
+        oss << ") and format " << info.format << ". Expected a 1D array with shape (N) and uint32_t data type.";
+        throw std::runtime_error(oss.str());
+    }
+    RLRAudioPropagation::IndexData index_data;
+    index_data.indices = static_cast<const uint32_t*>(info.ptr);
+    index_data.indexCount = info.shape[0];
+    index_data.byteOffset = 0; // Assuming no byte offset for simplicity
+    return index_data;
+}
+
 void bind_RLRAudioPropagation(py::module &m) {
     // Bind the RLRAudioPropagation::ErrorCodes enum
     py::enum_<RLRAudioPropagation::ErrorCodes>(m, "ErrorCodes")
@@ -139,6 +158,7 @@ void bind_RLRAudioPropagation(py::module &m) {
 
     // Add the numpy_to_vertex_data function
     m.def("as_vertex_data", &as_vertex_data, "Convert a NumPy array to VertexData");
+    m.def("as_index_data", &as_index_data, "Convert a NumPy array to IndexData");
 
     // Bind the RLRAudioPropagation::IndexData struct
     py::class_<RLRAudioPropagation::IndexData>(m, "IndexData")
@@ -186,7 +206,7 @@ void bind_RLRAudioPropagation(py::module &m) {
 
 }
 
-PYBIND11_MODULE(RLRAudioPropagation, m) {
+PYBIND11_MODULE(_rlr_audio_propagation_v1, m) {
     m.doc() = "Python bindings for RLRAudioPropagation";
     bind_RLRAudioPropagation(m);
 }
