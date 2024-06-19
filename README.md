@@ -14,6 +14,10 @@ This project hosts the binaries and headers for the audio propagation engine use
 rlr-audio-propagation requires or works with
 * Linux - x64
 
+```bash
+pip install .
+```
+
 ## License
 
 RLR-Audio-Propagation is CC-BY-NC licensed. See the [LICENSE](LICENSE) for details.
