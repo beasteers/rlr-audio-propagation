@@ -60,10 +60,10 @@ def draw_grid(scene, xs, ys, zs, out_fname):
         f.write(scene.save_image())
     scene.delete_geometry(spheres)
 
-# MP3D_GLB="/datasets/soundspaces/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb"
+MP3D_GLB="/datasets/soundspaces/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb"
 GIBSON_GLB="/datasets/soundspaces/scene_datasets/gibson_data/gibson/Oyens.glb"
 
-def main(glb_file=GIBSON_GLB, ch=4, n=18):
+def main(glb_file=MP3D_GLB, ch=4, n=18):
     ply_file = glb_file.rsplit('.', 1)[0] + '_semantic.ply'
     name = os.path.basename(glb_file).rsplit('.', 1)[0]
     out_dir = "output"
@@ -91,15 +91,20 @@ def main(glb_file=GIBSON_GLB, ch=4, n=18):
         scene.geometry[k].visual.face_colors = [255, 235, 255]
     scene.add_geometry(trimesh.creation.axis(axis_length=1))
 
-    xs = np.linspace(-12, 6, n)
-    ys = np.linspace(-4, 6, n)
-    zs = np.linspace(0, 2, n)
+    n=3
+    # xs = np.linspace(-12, 6, n)
+    # ys = np.linspace(-4, 6, n)
+    # zs = np.linspace(0, 2, n)
+    mic_pos = np.array([-2, 1, 1])
+    xs = np.linspace(-1, 1, n) - 2
+    ys = np.linspace(-1, 1, n) + 1
+    zs = np.linspace(0.5, 1.5, n)
     # ys = [1.5]
-    zs = [1.5]
+    # zs = [1.5]
+    # zs = [1]
 
     draw_grid(scene, xs, ys, zs, f'{out_dir}/3d_all_{name}.png')
 
-    mic_pos=np.array([0, 1, 1])
     ineff = np.zeros((len(xs), len(ys), len(zs)))
     ymax = np.zeros((len(xs), len(ys), len(zs), ch))
     for i, x in enumerate(tqdm.tqdm(xs)):
@@ -124,13 +129,13 @@ def main(glb_file=GIBSON_GLB, ch=4, n=18):
     plt.imshow(ineff.squeeze().T)
     plt.savefig(os.path.join(out_dir, 'rayineff_grid.png'))
     plt.close()
-    ymax = ymax.squeeze().T
+    ymax = ymax.squeeze()
     for i in range(ymax.shape[-1]):
         plt.figure(figsize=(10, 10))
         plt.imshow(ymax[:,:,i].T)
-        plt.xticks(range(len(xs)), xs)
-        plt.yticks(range(len(ys)), ys)
-        plt.savefig(os.path.join(out_dir, 'ymax_grid.png'))
+        plt.xticks(range(len(xs)), np.round(xs, 1))
+        plt.yticks(range(len(ys)), np.round(ys, 1))
+        plt.savefig(os.path.join(out_dir, f'ymax_grid_{i}.png'))
         plt.close()
 
 if __name__ == '__main__':
