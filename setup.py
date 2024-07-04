@@ -42,6 +42,9 @@ setup(
     package_data={
         'RLRAudioPropagationPkg': ['libs/linux/x64/libRLRAudioPropagation.so']
     },
+    install_requires=[
+        'numpy',
+    ],
     packages=find_packages(),  # Automatically find packages in the directory
     include_package_data=True,  # Include package data files specified in package_data
 )

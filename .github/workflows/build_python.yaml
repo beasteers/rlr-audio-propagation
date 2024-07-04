@@ -1,0 +1,50 @@
+name: Build and Test Python Bindings
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, 3.10, 3.11]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel pybind11
+
+    - name: Build Python bindings
+      run: |
+        python setup.py bdist_wheel
+
+    - name: Upload Python bindings
+      uses: actions/upload-artifact@v2
+      with:
+        name: python-bindings-${{ matrix.python-version }}
+        path: dist/*.whl
+
+    - name: Install built wheel
+      run: |
+        pip install dist/*.whl
+
+    - name: Run tests
+      run: |
+        pip install pytest
+        pytest
