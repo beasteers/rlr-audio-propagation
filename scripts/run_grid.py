@@ -61,10 +61,11 @@ def draw_grid(scene, xs, ys, zs, out_fname):
     scene.delete_geometry(spheres)
 
 MP3D_GLB="/datasets/soundspaces/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb"
-GIBSON_GLB="/datasets/soundspaces/scene_datasets/gibson_data/gibson/Oyens.glb"
+GIBSON_GLB="/datasets/soundspaces/scene_datasets/gibson_data/gibson_medium/Adairsville/mesh.obj"
 
-def main(glb_file=MP3D_GLB, ch=4, n=18):
-    ply_file = glb_file.rsplit('.', 1)[0] + '_semantic.ply'
+def main(glb_file=GIBSON_GLB, ch=4, n=18):
+    # ply_file = glb_file.rsplit('.', 1)[0] + '_semantic.ply'
+    ply_file = os.path.dirname(glb_file) + '_semantic.ply'
     name = os.path.basename(glb_file).rsplit('.', 1)[0]
     out_dir = "output"
     os.makedirs(out_dir, exist_ok=True)
@@ -84,11 +85,16 @@ def main(glb_file=MP3D_GLB, ch=4, n=18):
     ctx.add_listener(ChannelLayout(ChannelLayoutType.Ambisonics, ch))
 
     scene = trimesh.load(glb_file)
+    if not isinstance(scene, trimesh.Scene):
+        scene = trimesh.Scene(scene)
     # rotation_matrix = trimesh.transformations.rotation_matrix(-np.radians(90), [1, 0, 0])
     # scene.apply_transform(rotation_matrix)
-    for k,g in scene.geometry.items():
-        scene.geometry[k].visual = g.visual.to_color()
-        scene.geometry[k].visual.face_colors = [255, 235, 255]
+    try:
+        for k,g in scene.geometry.items():
+            scene.geometry[k].visual = g.visual.to_color()
+            scene.geometry[k].visual.face_colors = [255, 235, 255]
+    except Exception:
+        pass
     scene.add_geometry(trimesh.creation.axis(axis_length=1))
 
     n=3

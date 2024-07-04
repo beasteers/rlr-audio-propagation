@@ -35,6 +35,7 @@ setup(
     name="rlr_audio_propagation",
     version="0.0.1",
     description="Python bindings for RLRAudioPropagation",
+    license="Attribution-NonCommercial 4.0 International",
     ext_modules=ext_modules,
     cmdclass={"build_ext": CustomBuildExt},
     zip_safe=False,
