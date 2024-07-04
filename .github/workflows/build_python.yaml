@@ -41,9 +41,8 @@ jobs:
         path: dist/*.whl
 
     - name: Install built wheel
-      - name: Install built wheel
-        run: |
-          pip install dist/*.whl
+      run: |
+        pip install dist/*.whl
 
     - name: Run tests
       run: |
