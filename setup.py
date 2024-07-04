@@ -45,6 +45,12 @@ setup(
     install_requires=[
         'numpy',
     ],
+    extras_require={
+        'test': [
+            'trimesh',
+            'pytest',
+        ],
+    },
     packages=find_packages(),  # Automatically find packages in the directory
     include_package_data=True,  # Include package data files specified in package_data
 )

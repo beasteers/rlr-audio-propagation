@@ -41,10 +41,11 @@ jobs:
         path: dist/*.whl
 
     - name: Install built wheel
-      run: |
-        pip install dist/*.whl
+      - name: Install built wheel
+        run: |
+          pip install dist/*.whl
 
     - name: Run tests
       run: |
-        pip install pytest
+        pip install pytest trimesh
         pytest
